@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGR - Quel super-héros es-tu ?</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    width: 500px;
+    max-width: 90%;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #8B0000;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #8B0000;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.answer-btn {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 6px;
+    border: 2px solid #8B0000;
+    background: white;
+    cursor: pointer;
+    transition: 0.2s;
+    color:black;
+}
+
+.answer-btn:hover {
+    background: #8B0000;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+
+img {
+    max-width: 400px;
+    margin-top: 40px;
+}
+
+#result-page {
+    text-align: center;
+}
+
+#result-image {
+    display: block;
+    max-width: 220px;
+    margin: 25px auto 20px auto;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- PAGE ACCUEIL -->
+    <div id="start-page">
+        <img src="img-SH/AGR-logo.png" alt="Logo Art'Vengers">
+        <h1>AGR</h1>
+        <p>Quel super-héros es-tu ?</p>
+        <button onclick="startQuiz()">Art'vengers, rassemblement !</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz-page" class="hidden">
+        <p id="question-counter"></p>
+        <h2 id="question-text"></h2>
+        <div id="answers-container"></div>
+    </div>
+
+    <!-- RESULTATS -->
+    <div id="result-page" class="hidden">
+        <h1>Résultats</h1>
+        <div id="result-text"></div>
+        <img id="result-image" src="" alt="Super héros">
+        <button onclick="restartQuiz()">Recommencer</button>
+    </div>
+
+</div>
+
+<script>
+
+const questions = [
+{
+question: "Ta boisson préférée ?",
+answers: [
+{ text: "Un thé matcha.", hero: "ironMan" },
+{ text: "Du SP-95.", hero: "hulk" },
+{ text: "Un Coca Cola.", hero: "spiderMan" },
+{ text: "Une bière ambrée bien forte.", hero: "thor" },
+{ text: "Un café.", hero: "hawkeye" }
+]
+},
+{
+question: "Un pote a un date important et il stresse :",
+answers: [
+{ text: "Je lui donne un oreillette et je lui dis quoi dire sur le moment.", hero: "ironMan" },
+{ text: "Caillou.", hero: "hulk" },
+{ text: "Je lui dis de pas y aller et on va au café pop.", hero: "spiderMan" },
+{ text: "Je lui donne des conseils sur son outfit pour qu'il soit sur son 31.", hero: "thor" },
+{ text: "Je lui donne une disquette qui marche à tous les coups.", hero: "hawkeye" }
+]
+},
+{
+question: "C'est la fin du mois, t'as 3€78 sur ton compte en banque :",
+answers: [
+{ text: "Je fais du micro-trading, je fais x4 en 3h et j'achète un tacos sur ubereats .", hero: "ironMan" },
+{ text: "Je rackette une mamie et j'achète une entrecôte que je fais au bbq.", hero: "hulk" },
+{ text: "Je parie tout ce qui me reste sur l'OM, je perds tout et je mange mes doigts comme Stromae.", hero: "spiderMan" },
+{ text: "Je vais cueillir des champignons avec GRouen.", hero: "thor" },
+{ text: "J'avais prévu des réserves de pâtes et de pesto.", hero: "hawkeye" }
+]
+},
+{
+question: "Ton but en tant que super-héros :",
+answers: [
+{ text: "Vendre des armes aux talibans.", hero: "ironMan" },
+{ text: "Taper aussi fort que je suis con.", hero: "hulk" },
+{ text: "Faire des photos pour le Fbeye quand je suis en civil.", hero: "spiderMan" },
+{ text: "Avoir le même bide que Thor dans Endgame.", hero: "thor" },
+{ text: "Faire figuration dans les films Art'vengers.", hero: "hawkeye" }
+]
+},
+{
+question: "Ton style est plutôt :",
+answers: [
+{ text: "Branché.", hero: "ironMan" },
+{ text: "Nu.", hero: "hulk" },
+{ text: "Mec de cité, simple.", hero: "spiderMan" },
+{ text: "Divin.", hero: "thor" },
+{ text: "Discret mais efficace.", hero: "hawkeye" }
+]
+},
+{
+question: "Ta qualité principale :",
+answers: [
+{ text: "Trop charismatique.", hero: "ironMan" },
+{ text: "Trop musclé(e).", hero: "hulk" },
+{ text: "Trop bg.", hero: "spiderMan" },
+{ text: "Trop beau/belle.", hero: "thor" },
+{ text: "Trop charmant(e).", hero: "hawkeye" }
+]
+},
+{
+question: "Ta mission idéale :",
+answers: [
+{ text: "Draguer la VP AGR.", hero: "ironMan" },
+{ text: "Faire de la MMA avec notre listeux Hugo.", hero: "hulk" },
+{ text: "Tisser des liens avec les AGR du pôle créa.", hero: "spiderMan" },
+{ text: "Aller te faire faire les ongles avec notre AGR Mélanie à la JA.", hero: "thor" },
+{ text: "Peindre des tifos de Groot sans déborder.", hero: "hawkeye" }
+]
+},
+{
+question: "Ton job de rêve :",
+answers: [
+{ text: "Pierre Chartier, X 2007, Head of Trading Vol & Hybrides.", hero: "ironMan" },
+{ text: "Ouvrier de centrale nucléaire.", hero: "hulk" },
+{ text: "Entomologiste (ça veut dire spécialiste des insectes si jamais gros neuil).", hero: "spiderMan" },
+{ text: "Propriétaire du ''L'hâchez vous'', le lancer de hâche rive gauche.", hero: "thor" },
+{ text: "Sniper dans l'armée.", hero: "hawkeye" }
+]
+},
+{
+question: "Ton rôle chez les Art'vengers serait :",
+answers: [
+{ text: "Le prouveur.", hero: "ironMan" },
+{ text: "La brute.", hero: "hulk" },
+{ text: "L'arachnophobe.", hero: "spiderMan" },
+{ text: "Le bg.", hero: "thor" },
+{ text: "Le mec en second plan h24.", hero: "hawkeye" }
+]
+},
+{
+question: "Ta devise est :",
+answers: [
+{ text: "Jarvis, c'est à combien de temps d'ici le café pop ?", hero: "ironMan" },
+{ text: "Taper taper taper (avec la voix de miguel des as de la jungle).", hero: "hulk" },
+{ text: "De grands pouvoirs impliquent de voter pour AGR.", hero: "spiderMan" },
+{ text: "Keske jsuis bg moi, mais, mais qu'ai-je fait pour être si bggggg ? (Faut avoir la réf)", hero: "thor" },
+{ text: "Les arcs de crise m'ont bien eu aux concours BCE.", hero: "hawkeye" }
+]
+},
+];
+
+let currentQuestion = 0;
+let scores = {
+ironMan: 0,
+hulk: 0,
+spiderMan: 0,
+thor: 0,
+hawkeye: 0
+};
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+function startQuiz() {
+document.getElementById("start-page").classList.add("hidden");
+document.getElementById("quiz-page").classList.remove("hidden");
+showQuestion();
+}
+
+function showQuestion() {
+let q = questions[currentQuestion];
+shuffleArray(q.answers);
+document.getElementById("question-counter").innerText = "Question " + (currentQuestion+1) + " / 10";
+document.getElementById("question-text").innerText = q.question;
+
+let container = document.getElementById("answers-container");
+container.innerHTML = "";
+
+q.answers.forEach(answer => {
+let btn = document.createElement("button");
+btn.innerText = answer.text;
+btn.classList.add("answer-btn");
+btn.onclick = () => selectAnswer(answer.hero);
+container.appendChild(btn);
+});
+}
+
+function selectAnswer(hero) {
+scores[hero]++;
+currentQuestion++;
+
+if (currentQuestion < questions.length) {
+showQuestion();
+} else {
+showResult();
+}
+}
+
+function showResult() {
+document.getElementById("quiz-page").classList.add("hidden");
+document.getElementById("result-page").classList.remove("hidden");
+
+let winner = Object.keys(scores).reduce((a,b) => scores[a] > scores[b] ? a : b);
+
+let resultText = "";
+let imageFile = "";
+
+if (winner === "ironMan") {
+resultText = "Félicitations !! <br> <br> Tu es Iron Crâne ! <br> <br> Iron Crâne fait office de discoboule chez les Art'vengers lorsqu'il ne casse pas du méchant. Son père a fondé Stark Industries, un groupe spécialisé dans l'industrie de l'armement, mais sa plus belle arme s'est révélée être le boulet de canon aberrant de son fils.";
+imageFile = "img-SH/Iron-Crane.png";
+}
+if (winner === "hulk") {
+resultText = "Félicitations !! <br> <br> Tu es Cetelem ! <br> <br> Ta puissance est inégalée et tu accordes des prêts à la consommation via la BNP pour financer la liste des Art'vengers, quel altruisme.";
+imageFile = "img-SH/hulk.jpeg";
+}
+if (winner === "spiderMan") {
+resultText = "Félicitations !! <br> <br> Tu es Spider Manager ! <br> <br> Agile, comme tout bon manager devrait l'être, Spider Manager a su trouver sa place chez les Art'vengers en papotant aux pauses café et en tissant des liens en toile d'araignée";
+imageFile = "img-SH/spidermanager.jpeg";
+}
+if (winner === "thor") {
+resultText = "Félicitations !! <br> <br> Tu es ''Thor d'Hossegor, cherche pas t'as Thor, j'suis collecThor'' ! <br> <br> Dieu du tonnerre (et du surf) venu du royaume d'Asgard, noble et puissant, tu inspires le respect par ta chevelure blonde un peu trop proche de Brice de Nice et (surtout) par ton marteau.";
+imageFile = "img-SH/thor.jpeg";
+}
+if (winner === "hawkeye") {
+resultText = "Félicitations !! <br> <br> Tu es Neuil de Faucon ! <br> <br>  Chez les Art'vengers, Neuil de Faucon est la norme, il neuille partout, tout le temps... peut-être un peu trop, surtout quand il est en duo avec la VP, mais à la fin il vise juste !";
+imageFile = "img-SH/neuil.jpeg";
+}
+
+document.getElementById("result-text").innerHTML = resultText;
+document.getElementById("result-image").src = imageFile;
+}
+
+function restartQuiz() {
+currentQuestion = 0;
+scores = { ironMan:0, hulk:0, spiderMan:0, thor:0, hawkeye:0 };
+
+document.getElementById("result-page").classList.add("hidden");
+document.getElementById("start-page").classList.remove("hidden");
+}
+
+</script>
+
+</body>
+</html>
